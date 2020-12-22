@@ -7,21 +7,16 @@ const logger = require("morgan");
 const app = express();
 const db = require("./dbconfig");
 //imported routes
-const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
 
 //variables
-const collection = "ecommerceStore";
+const collection = "users";
 
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
-app.get("/data", (req, res) => {
+app.get("/", (req, res) => {
   db.getDB()
     .collection(collection)
     .find({})
@@ -40,9 +35,7 @@ db.connect((err) => {
     console.log("unable to connect to database");
     process.exit(1);
   } else {
-    app.listen(5000, () => {
-      console.log("connect to database, app listening on port 5000");
-    });
+    console.log("connect to database, app listening on port 3000");
   }
 });
 
