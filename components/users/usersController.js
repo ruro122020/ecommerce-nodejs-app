@@ -15,3 +15,15 @@ step 7: controller responds to the client
 //code example to model
 /*
  */
+
+const express = require("express");
+const handleRequest = require("./usersService");
+const router = express.Router();
+
+router.get("/users", async (req, res) => {
+  const documents = await handleRequest();
+  console.log("documents", documents);
+  res.json(documents);
+});
+
+module.exports = router;
