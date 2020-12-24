@@ -4,29 +4,53 @@
 //code example to model
 /*
  */
+const MongooseService = require("./usersDAL"); // Data Access Layer
+const PostModel = require("../models/post"); // Database Model
 
-const db = require("../../dbconfig");
+class PostService {
+  /**
+   * @description Create an instance of PostService
+   */
+  constructor() {
+    // Create instance of Data Access layer using our desired model
+    this.MongooseServiceInstance = new MongooseService(PostModel);
+  }
 
-//variables
-const usersCollection = "users";
+  /**
+   * @description Attempt to create a post with the provided object
+   * @param postToCreate {object} Object containing all required fields to
+   * create post
+   * @returns {Promise<{success: boolean, error: *}|{success: boolean, body: *}>}
+   */
+  async create(postToCreate) {
+    try {
+      const result = await this.MongooseServiceInstance.create(postToCreate);
+      return { success: true, body: result };
+    } catch (err) {
+      return { success: false, error: err };
+    }
+  }
+}
 
-const handleRequest = async () => {
-  const getData = db.getDB();
+module.exports = PostService;
 
-  const data = await getData
-    .collection(usersCollection)
-    .find({})
-    .toArray((err, documents) => {
-      if (err) {
-        console.log(err);
-        return err;
-      } else {
-        console.log("documents in handleRequest function", documents);
-        return documents;
-      }
-    });
-  console.log("data", data);
-  return data;
-};
+// const ObjectID = require("mongodb").ObjectId;
+// const { postClientInfoDAL } = require("./usersDAL");
 
-module.exports = handleRequest;
+// const handleClientRequestSL = (clientObj) => {
+//   const clientSideInfo = {
+//     _id: ObjectID(),
+//     name: clientObj.name,
+//     age: clientObj.age,
+//     fav: clientObj.fav,
+//     data: new Date(),
+//   };
+//   const serviceCB = (successful) => {
+//     //pass to controller
+//     if (successful === 1) {
+//     }
+//   };
+//   postClientInfoDAL(clientSideInfo, serviceCB);
+// };
+
+// module.exports = { handleClientRequestSL };

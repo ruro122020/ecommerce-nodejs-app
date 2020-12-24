@@ -8,6 +8,9 @@ const dbName = "ecommerce";
 const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 
 /*************************************************************/
+
+const client = new MongoClient(uri, mongoOptions);
+
 const state = {
   db: null,
 };
@@ -35,4 +38,4 @@ const getDB = () => {
   return state.db;
 };
 
-module.exports = { getDB, getPrimaryKey, connect };
+module.exports = { getDB, getPrimaryKey, connect, client };

@@ -9,7 +9,7 @@ const db = require("./dbconfig");
 
 //imported routes
 const productsRoute = require("./components/products/productsController");
-const usersRoute = require("./components/users/usersController");
+const usersController = require("./components/users/usersController");
 
 //variables
 
@@ -20,7 +20,7 @@ app.use(cookieParser());
 
 //routes
 app.use("/", productsRoute);
-app.use("/", usersRoute);
+app.use("/", usersController);
 
 //connection to mongodb confirmation
 db.connect((err) => {
@@ -28,7 +28,7 @@ db.connect((err) => {
     console.log("unable to connect to database");
     process.exit(1);
   } else {
-    console.log("connect to database, app listening on port 3000");
+    console.log("connected to database, app listening on port 3000");
   }
 });
 

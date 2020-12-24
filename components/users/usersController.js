@@ -16,14 +16,45 @@ step 7: controller responds to the client
 /*
  */
 
-const express = require("express");
-const handleRequest = require("./usersService");
-const router = express.Router();
+const PostService = require("../users/usersService");
+const PostServiceInstance = new PostService();
 
-router.get("/users", async (req, res) => {
-  const documents = await handleRequest();
-  console.log("documents", documents);
-  res.json(documents);
-});
+/**
+ * @description Create a cord with the provided body
+ * @param req {object} Express req object
+ * @param res {object} Express res object
+ * @returns {Promise<*>}
+ */
+async function createCord(req, res) {
+  const reqBodyObj = req.body;
+  try {
+    // We only pass the body object, never the req object
+    const createdCord = await PostServiceInstance.create(reqBodyObj);
+    return res.send(createdCord);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+}
+module.exports = { createCord };
 
-module.exports = router;
+// const express = require("express");
+// const usersController = express.Router();
+
+// const { handleClientRequestSL } = require("./usersService");
+
+// const { DAL } = require("./usersDAL");
+
+// usersController.get("/users", (req, res) => {
+//   const cbController = (data) => {
+//     console.log("data is in usersController", data);
+//     res.json(data);
+//   };
+//   DAL(cbController);
+// });
+
+// usersController.post("/users", (req, res) => {
+//   const clientObj = req.body;
+//   handleClientRequestSL(clientObj);
+// });
+
+// module.exports = usersController;
