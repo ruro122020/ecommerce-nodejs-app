@@ -13,48 +13,29 @@ step 7: controller responds to the client
  */
 
 //code example to model
-/*
- */
 
-const PostService = require("../users/usersService");
-const PostServiceInstance = new PostService();
+const express = require("express");
+const usersController = express.Router();
 
-/**
- * @description Create a cord with the provided body
- * @param req {object} Express req object
- * @param res {object} Express res object
- * @returns {Promise<*>}
- */
-async function createCord(req, res) {
-  const reqBodyObj = req.body;
-  try {
-    // We only pass the body object, never the req object
-    const createdCord = await PostServiceInstance.create(reqBodyObj);
-    return res.send(createdCord);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-}
-module.exports = { createCord };
+const { getUsersSL } = require("./usersService");
 
-// const express = require("express");
-// const usersController = express.Router();
+usersController.get("/users", async (req, res) => {
+  const users = await getUsersSL();
+  res.json(users);
+});
 
-// const { handleClientRequestSL } = require("./usersService");
+usersController.post("/users", (req, res) => {
+  const clientObj = req.body;
 
-// const { DAL } = require("./usersDAL");
+  const controllerCB = (num) => {
+    if (num === 1) {
+      res.status(200).json({ msg: num });
+    } else {
+      res.status(400).json({ msg: num });
+    }
+  };
 
-// usersController.get("/users", (req, res) => {
-//   const cbController = (data) => {
-//     console.log("data is in usersController", data);
-//     res.json(data);
-//   };
-//   DAL(cbController);
-// });
+  handleClientRequestSL(clientObj, controllerCB);
+});
 
-// usersController.post("/users", (req, res) => {
-//   const clientObj = req.body;
-//   handleClientRequestSL(clientObj);
-// });
-
-// module.exports = usersController;
+module.exports = usersController;
