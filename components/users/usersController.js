@@ -17,25 +17,23 @@ step 7: controller responds to the client
 const express = require("express");
 const usersController = express.Router();
 
-const { getUsersSL } = require("./usersService");
+const { getUsersSL, addUserSL } = require("./usersService");
 
 usersController.get("/users", async (req, res) => {
   const users = await getUsersSL();
   res.json(users);
 });
 
-usersController.post("/users", (req, res) => {
-  const clientObj = req.body;
-
-  const controllerCB = (num) => {
-    if (num === 1) {
-      res.status(200).json({ msg: num });
-    } else {
-      res.status(400).json({ msg: num });
-    }
-  };
-
-  handleClientRequestSL(clientObj, controllerCB);
+usersController.post("/users", async (req, res) => {
+  try {
+    const clientObj = req.body;
+    const response = await addUserSL(clientObj);
+    res.status(200).json(response);
+  } catch (err) {
+    res.status(404).json({
+      msg: err,
+    });
+  }
 });
 
 module.exports = usersController;

@@ -20,7 +20,7 @@ const getUsersDAL = async () => {
       const find = await collection.find({});
       const results = await find.toArray((err, documents) => {
         if (err) {
-          reject("did not work");
+          reject(err);
         }
         resolve(documents);
       });
@@ -30,33 +30,17 @@ const getUsersDAL = async () => {
   }
 };
 
-const postUserDAL = async (clientSideInfo) => {
-  //connect to mongodb
-  client.connect((err) => {
-    if (err) console.log("err", err);
-
-    //retrieve database object
-    const db = client.db(dbName);
-
-    //insert data to mongodb
-    db.collection(usersCollection).insertOne(
-      clientSideInfo,
-      (err, response) => {
-        try {
-          if (err)
-            console.log("there was an error adding the data to mongodb", err);
-
-          //passing results to service layer
-          if (response.result.ok === 1) {
-            const successful = response.result.ok;
-            console.log("successful", successful);
-            serviceCB(successful);
-          }
-        } catch (err) {
-          console.log("err in inserOne", err);
+const addUserDAL = async (userInfo) => {
+  //insert data to mongodb
+  return new Promise((resolve, reject) => {
+    db.getDB()
+      .collection(usersCollection)
+      .insertOne(userInfo, (err, response) => {
+        if (err) reject(err);
+        if (response.result.ok === 1) {
+          resolve(response.result.ok);
         }
-      }
-    );
+      });
   });
 };
-module.exports = { getUsersDAL, postUserDAL };
+module.exports = { getUsersDAL, addUserDAL };

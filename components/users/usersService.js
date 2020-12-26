@@ -35,7 +35,7 @@ module.exports = PostService;
  */
 
 const ObjectID = require("mongodb").ObjectId;
-const { postClientInfoDAL, DAL } = require("./usersDAL");
+const { addUserDAL, getUsersDAL } = require("./usersDAL");
 
 const getUsersSL = async () => {
   try {
@@ -46,6 +46,22 @@ const getUsersSL = async () => {
   }
 };
 
+const addUserSL = async (user) => {
+  try {
+    const userInfo = {
+      _id: ObjectID(),
+      name: user.name,
+      age: user.age,
+      fav: user.fav,
+      data: new Date(),
+    };
+
+    const addToListOfUsers = await addUserDAL(userInfo);
+    return addToListOfUsers;
+  } catch (err) {
+    console.log("err in usersService.js", err);
+  }
+};
 // const handleClientRequestSL = (clientObj, controllerCB) => {
 //   const clientSideInfo = {
 //     _id: ObjectID(),
@@ -63,4 +79,4 @@ const getUsersSL = async () => {
 //   postClientInfoDAL(clientSideInfo, serviceCB);
 // };
 
-module.exports = { getUsersSL };
+module.exports = { getUsersSL, addUserSL };
