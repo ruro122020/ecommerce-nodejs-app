@@ -12,25 +12,27 @@ step 6: service layer recieves results from DAL and then hand everything back to
 step 7: controller responds to the client
  */
 
-//code example to model
-
 const express = require("express");
 const usersController = express.Router();
-
 const { getUsersSL, addUserSL } = require("./usersService");
 
 usersController.get("/users", async (req, res) => {
-  const users = await getUsersSL();
-  res.json(users);
+  try {
+    const users = await getUsersSL();
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
-usersController.post("/users", async (req, res) => {
+usersController.post("/user", async (req, res) => {
   try {
-    const clientObj = req.body;
-    const response = await addUserSL(clientObj);
+    const user = req.body;
+    console.log("user", user);
+    const response = await addUserSL(user);
     res.status(200).json(response);
   } catch (err) {
-    res.status(404).json({
+    res.status(500).json({
       msg: err,
     });
   }

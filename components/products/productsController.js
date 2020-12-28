@@ -1,22 +1,26 @@
 const express = require("express");
-const router = express.Router();
+const productsController = express.Router();
 const db = require("../../dbconfig");
+const { geProductsSL, addProductSL } = require("./productsService");
 
-//variables
-const productCollection = "products";
-
-router.get("/products", (req, res) => {
-  db.getDB()
-    .collection(productCollection)
-    .find({})
-    .toArray((err, documents) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(documents);
-        res.json(documents);
-      }
-    });
+productsController.get("/products", async (req, res) => {
+  try {
+    const products = await geProductsSL();
+    res.status(200).json(products);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
-module.exports = router;
+productsController.post("/product", async (req, res) => {
+  try {
+    const product = req.body;
+    const response = await addProductSL(product);
+    res.status(200).json(response);
+  } catch (err) {
+    res.status(500).json({
+      msg: err,
+    });
+  }
+});
+module.exports = productsController;

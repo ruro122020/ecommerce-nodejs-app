@@ -8,7 +8,7 @@ const app = express();
 const db = require("./dbconfig");
 
 //imported routes
-const productsRoute = require("./components/products/productsController");
+const productsController = require("./components/products/productsController");
 const usersController = require("./components/users/usersController");
 
 //variables
@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 //routes
-app.use("/", productsRoute);
+app.use("/", productsController);
 app.use("/", usersController);
 
 //connection to mongodb confirmation

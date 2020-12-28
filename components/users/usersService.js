@@ -1,59 +1,76 @@
 //THIS SCRIPT IS THE SERVICE LAYER FOR USERS
 //Use a service layer for you business logic.
 
-//code example to model
-/*
-const MongooseService = require("./usersDAL"); // Data Access Layer
-const PostModel = require("../models/post"); // Database Model
-
-class PostService {
-  /*************************************************
-   * @description Create an instance of PostService
-   *************************************************
-  constructor() {
-    // Create instance of Data Access layer using our desired model
-    this.MongooseServiceInstance = new MongooseService(PostModel);
-  }
-
-  /*******************************************************************************
-   * @description Attempt to create a post with the provided object
-   * @param postToCreate {object} Object containing all required fields to
-   * create post
-   * @returns {Promise<{success: boolean, error: *}|{success: boolean, body: *}>}
-   *******************************************************************************
-  async create(postToCreate) {
-    try {
-      const result = await this.MongooseServiceInstance.create(postToCreate);
-      return { success: true, body: result };
-    } catch (err) {
-      return { success: false, error: err };
-    }
-  }
-}
-
-module.exports = PostService;
- */
-
 const ObjectID = require("mongodb").ObjectId;
 const { addUserDAL, getUsersDAL } = require("./usersDAL");
 
 const getUsersSL = async () => {
   try {
-    const data = await getUsersDAL();
-    return data;
+    const users = await getUsersDAL();
+    return users;
   } catch (err) {
     return err;
   }
 };
+/*
+DATA STRUCTURE 
+const dataStructure = {
+  "name": {
+        "first": "Lidia",
+        "middle": "ivy",
+        "last": "quinn"
+      },
+  "DOB": "01/01/01",
+  "email": "lidia@email.com",
+  "password": "somehashedpassword",
+  "addresses": [
+        {
+          "label":"home",
+          "street":"123 main street ",
+          "city": "Boston",
+          "zip":"22222",
+          "country": "US"
+      },
+      {
+          "label":"mom",
+          "street":"456 first street ",
+          "city": "orlando",
+          "zip":"55555",
+          "country": "US"
+      }
 
+    ],
+  "paymentMethods": [
+      {
+        "method": "credit card"
+      },
+      {
+        "method": "paypal"
+      }
+    ],
+  "contact":[
+    {
+      "label": "cell",
+      "phone1": "123-456-7890"
+    },
+    {
+      "label": "husbands cell",
+      "phone": "123-456-7890"
+    }
+  ]
+}  
+
+*/
 const addUserSL = async (user) => {
   try {
     const userInfo = {
       _id: ObjectID(),
       name: user.name,
-      age: user.age,
-      fav: user.fav,
-      data: new Date(),
+      DOB: user.DOB,
+      addresses: user.addresses,
+      paymentMethods: user.paymentMethods,
+      contact: user.contact,
+      date: new Date(),
     };
 
     const addToListOfUsers = await addUserDAL(userInfo);
@@ -62,21 +79,5 @@ const addUserSL = async (user) => {
     console.log("err in usersService.js", err);
   }
 };
-// const handleClientRequestSL = (clientObj, controllerCB) => {
-//   const clientSideInfo = {
-//     _id: ObjectID(),
-//     name: clientObj.name,
-//     age: clientObj.age,
-//     fav: clientObj.fav,
-//     data: new Date(),
-//   };
-//   const serviceCB = (successful) => {
-//     //pass to controller
-//     if (successful === 1) {
-//       controllerCB(successful);
-//     }
-//   };
-//   postClientInfoDAL(clientSideInfo, serviceCB);
-// };
 
 module.exports = { getUsersSL, addUserSL };
