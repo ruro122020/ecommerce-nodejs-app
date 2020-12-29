@@ -27,9 +27,8 @@ usersController.get("/users", async (req, res) => {
 
 usersController.post("/user", async (req, res) => {
   try {
-    const user = req.body;
-    console.log("user", user);
-    const response = await addUserSL(user);
+    const userInfo = req.body;
+    const response = await addUserSL(userInfo);
     res.status(200).json(response);
   } catch (err) {
     res.status(500).json({

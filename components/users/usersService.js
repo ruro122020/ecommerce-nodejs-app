@@ -20,6 +20,7 @@ const dataStructure = {
         "middle": "ivy",
         "last": "quinn"
       },
+  "username": "ivyquinn"
   "DOB": "01/01/01",
   "email": "lidia@email.com",
   "password": "somehashedpassword",
@@ -61,20 +62,27 @@ const dataStructure = {
 }  
 
 */
-const addUserSL = async (user) => {
+const addUserSL = async (userInfo) => {
   try {
-    const userInfo = {
+    const userObj = {
       _id: ObjectID(),
-      name: user.name,
-      DOB: user.DOB,
-      addresses: user.addresses,
-      paymentMethods: user.paymentMethods,
-      contact: user.contact,
+      name: userInfo.name,
+      username: userInfo.username,
+      email: userInfo.email,
+      DOB: userInfo.DOB,
+      addresses: userInfo.addresses,
+      paymentMethods: userInfo.paymentMethods,
+      contact: userInfo.contact,
       date: new Date(),
     };
-
-    const addToListOfUsers = await addUserDAL(userInfo);
-    return addToListOfUsers;
+    const user = await addUserDAL(userObj);
+    if (user === 1) {
+      return { msg: "user was added", code: 1 };
+    } else if (user === 2) {
+      return { msg: "user already exist", code: 2 };
+    } else {
+      return { msg: "something went wrong", code: 3 };
+    }
   } catch (err) {
     console.log("err in usersService.js", err);
   }

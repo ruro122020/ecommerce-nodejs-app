@@ -21,6 +21,7 @@ const addProductSL = async (product) => {
       SEO: product.SEO,
       date: new Date(),
     };
+    //check to see if product already exist
 
     const addToListOfProducts = await addProductDAL(productInfo);
     return addToListOfProducts;
