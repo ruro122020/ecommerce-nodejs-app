@@ -10,21 +10,26 @@ const geProductsSL = async () => {
   }
 };
 
-const addProductSL = async (product) => {
+const addProductSL = async (productInfo) => {
   try {
-    const productInfo = {
+    const product = {
       _id: ObjectID(),
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      discounts: product.discounts,
-      SEO: product.SEO,
+      name: productInfo.name.toUpperCase(),
+      description: productInfo.description,
+      price: productInfo.price,
+      quantity: productInfo.quantity,
+      discounts: productInfo.discounts,
+      SEO: productInfo.SEO,
       date: new Date(),
     };
-    //check to see if product already exist
-
-    const addToListOfProducts = await addProductDAL(productInfo);
-    return addToListOfProducts;
+    const result = await addProductDAL(product);
+    if (result === 1) {
+      return { msg: "product has been added", code: 1 };
+    } else if (result === 2) {
+      return { msg: "product already exist", code: 2 };
+    } else {
+      return { msg: "something went wrong", code: 3 };
+    }
   } catch (err) {
     console.log("err product Service.js", err);
   }

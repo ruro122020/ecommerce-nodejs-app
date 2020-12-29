@@ -23,21 +23,18 @@ const getUsersDAL = async () => {
 };
 
 //add new user to database
-const addUserDAL = async (userInfo) => {
-  const check = await checkIfUserExist(userInfo);
+const addUserDAL = async (user) => {
+  const check = await checkIfUserExist(user);
   if (!check) {
     return new Promise(async (resolve, reject) => {
       const dbState = db.getDB();
       const collection = await dbState.collection(usersCollection);
-      const insertUser = await collection.insertOne(
-        userInfo,
-        (err, response) => {
-          if (err) reject(err);
-          if (response.result.ok === 1) {
-            resolve(response.result.ok);
-          }
+      const insertUser = await collection.insertOne(user, (err, response) => {
+        if (err) reject(err);
+        if (response.result.ok === 1) {
+          resolve(response.result.ok);
         }
-      );
+      });
     });
   } else {
     return 2;

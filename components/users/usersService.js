@@ -64,21 +64,21 @@ const dataStructure = {
 */
 const addUserSL = async (userInfo) => {
   try {
-    const userObj = {
+    const user = {
       _id: ObjectID(),
       name: userInfo.name,
-      username: userInfo.username,
-      email: userInfo.email,
+      username: userInfo.username.toUpperCase(),
+      email: userInfo.email.toUpperCase(),
       DOB: userInfo.DOB,
       addresses: userInfo.addresses,
       paymentMethods: userInfo.paymentMethods,
       contact: userInfo.contact,
       date: new Date(),
     };
-    const user = await addUserDAL(userObj);
-    if (user === 1) {
-      return { msg: "user was added", code: 1 };
-    } else if (user === 2) {
+    const result = await addUserDAL(user);
+    if (result === 1) {
+      return { msg: "user has been added", code: 1 };
+    } else if (result === 2) {
       return { msg: "user already exist", code: 2 };
     } else {
       return { msg: "something went wrong", code: 3 };

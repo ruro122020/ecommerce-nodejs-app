@@ -1,5 +1,5 @@
 const db = require("../../dbconfig");
-
+const { checkIfProductExist } = require("./productsModel");
 //variables
 const productsCollection = "products";
 
@@ -19,23 +19,26 @@ const getProductsDAL = async () => {
     console.log("error in productsDAL", err);
   }
 };
+
 //add new product to database
-const addProductDAL = async (productInfo) => {
-  /*
-  note: make sure product doesn't already exist
-  */
-  return new Promise(async (resolve, reject) => {
-    const dbState = db.getDB();
-    const collection = await dbState.collection(productsCollection);
-    const insertProduct = await collection.insertOne(
-      productInfo,
-      (err, response) => {
-        if (err) reject(err);
-        if (response.result.ok === 1) {
-          resolve(response.result.ok);
+const addProductDAL = async (product) => {
+  const check = await checkIfProductExist(product);
+  if (!check) {
+    return new Promise(async (resolve, reject) => {
+      const dbState = db.getDB();
+      const collection = await dbState.collection(productsCollection);
+      const insertProduct = await collection.insertOne(
+        product,
+        (err, response) => {
+          if (err) reject(err);
+          if (response.result.ok === 1) {
+            resolve(response.result.ok);
+          }
         }
-      }
-    );
-  });
+      );
+    });
+  } else {
+    return 2;
+  }
 };
 module.exports = { getProductsDAL, addProductDAL };
