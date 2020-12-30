@@ -22,10 +22,10 @@ const addProductSL = async (productInfo) => {
       SEO: productInfo.SEO,
       date: new Date(),
     };
-    const result = await addProductDAL(product);
-    if (result === 1) {
+    const results = await addProductDAL(product);
+    if (results === 1) {
       return { msg: "product has been added", code: 1 };
-    } else if (result === 2) {
+    } else if (results === 2) {
       return { msg: "product already exist", code: 2 };
     } else {
       return { msg: "something went wrong", code: 3 };

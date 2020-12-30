@@ -1,8 +1,26 @@
 const db = require("../../dbconfig");
-const { checkIfProductExist } = require("./productsModel");
 //variables
 const productsCollection = "products";
 
+const checkIfProductExist = async (product) => {
+  return new Promise(async (resolve, reject) => {
+    const productName = product.name;
+    const dbState = db.getDB();
+    const collection = await dbState.collection(productsCollection);
+    const findProduct = await collection.find({
+      name: productName,
+    });
+    const results = await findProduct.toArray((err, product) => {
+      if (err) reject(err);
+      if (product.length === 0) {
+        return resolve(false);
+      } else {
+        resolve(true);
+      }
+    });
+  });
+};
+/************************************************************************/
 //get list of all products
 const getProductsDAL = async () => {
   try {
@@ -22,17 +40,17 @@ const getProductsDAL = async () => {
 
 //add new product to database
 const addProductDAL = async (product) => {
-  const check = await checkIfProductExist(product);
-  if (!check) {
+  const productExist = await checkIfProductExist(product);
+  if (!productExist) {
     return new Promise(async (resolve, reject) => {
       const dbState = db.getDB();
       const collection = await dbState.collection(productsCollection);
       const insertProduct = await collection.insertOne(
         product,
-        (err, response) => {
+        (err, results) => {
           if (err) reject(err);
-          if (response.result.ok === 1) {
-            resolve(response.result.ok);
+          if (results.result.ok === 1) {
+            resolve(results.result.ok);
           }
         }
       );

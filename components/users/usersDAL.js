@@ -1,11 +1,35 @@
 //THIS SCRIPT IS THE DATA ACCESS LAYER(DAL) FOR USERS
 //The data access layer interacts with the database by performing queries
 
+//functions that end with DAL are exported and used in services.
+//functions that don't end in DAL are seperations of concerns
+
 const db = require("../../dbconfig");
-const { checkIfUserExist } = require("./usersModel");
 
 //variables
 const usersCollection = "users";
+
+const checkIfUserExist = async (user) => {
+  return new Promise(async (resolve, reject) => {
+    const userEmail = user.email;
+    const username = user.username;
+    const dbState = db.getDB();
+    const collection = await dbState.collection(usersCollection);
+    const findUser = await collection.find({
+      username: username,
+      email: userEmail,
+    });
+    const results = await findUser.toArray((err, user) => {
+      if (err) reject(err);
+      if (user.length === 0) {
+        return resolve(false);
+      } else {
+        resolve(true);
+      }
+    });
+  });
+};
+/********************************************************************/
 
 //get list of all users
 const getUsersDAL = async () => {
@@ -24,15 +48,16 @@ const getUsersDAL = async () => {
 
 //add new user to database
 const addUserDAL = async (user) => {
-  const check = await checkIfUserExist(user);
-  if (!check) {
+  const userExist = await checkIfUserExist(user);
+  if (!userExist) {
     return new Promise(async (resolve, reject) => {
+      //insert user with hashed password
       const dbState = db.getDB();
       const collection = await dbState.collection(usersCollection);
-      const insertUser = await collection.insertOne(user, (err, response) => {
+      const insertUser = await collection.insertOne(user, (err, results) => {
         if (err) reject(err);
-        if (response.result.ok === 1) {
-          resolve(response.result.ok);
+        if (results.result.ok === 1) {
+          resolve(results.result.ok);
         }
       });
     });

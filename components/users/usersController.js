@@ -16,6 +16,9 @@ const express = require("express");
 const usersController = express.Router();
 const { getUsersSL, addUserSL } = require("./usersService");
 
+const verfiyToken = (req, res, next) => {};
+
+//SECURE THIS ROUTE
 usersController.get("/users", async (req, res) => {
   try {
     const users = await getUsersSL();
@@ -24,12 +27,13 @@ usersController.get("/users", async (req, res) => {
     res.status(500).json(err);
   }
 });
-
-usersController.post("/user", async (req, res) => {
+/**********************REGISTRATION ROUTES****************************/
+//User Registration Route
+usersController.post("/register-user", async (req, res) => {
   try {
     const userInfo = req.body;
-    const response = await addUserSL(userInfo);
-    res.status(200).json(response);
+    const results = await addUserSL(userInfo);
+    res.status(200).json(results);
   } catch (err) {
     res.status(500).json({
       msg: err,
@@ -37,4 +41,35 @@ usersController.post("/user", async (req, res) => {
   }
 });
 
+//Admin Registration Route
+usersController.post("/register-admin", async (req, res) => {});
+
+//Employee Registration Route
+usersController.post("/register-employee", async (req, res) => {});
+/**********************LOGIN ROUTES***********************************/
+//User Login Route
+usersController.post("/login-user", async (req, res) => {});
+//Admin Login Route
+usersController.post("/login-admin", async (req, res) => {});
+//Employee Login Route
+usersController.post("/login-employee", async (req, res) => {});
+/**********************PROTECTED ROUTES********************************/
+//User Protected Route
+usersController.post("/user/:id/profile", verfiyToken, async (req, res) => {});
+usersController.post("/user/:id/account", verfiyToken, async (req, res) => {});
+
+//Admin Protected Route
+usersController.post("/admin/:id/profile", verfiyToken, async (req, res) => {});
+usersController.post("/admin/:id/account", verfiyToken, async (req, res) => {});
+//Employee Protected Route
+usersController.post(
+  "/employee/:id/profile",
+  verfiyToken,
+  async (req, res) => {}
+);
+usersController.post(
+  "/employee/:id/account",
+  verfiyToken,
+  async (req, res) => {}
+);
 module.exports = usersController;

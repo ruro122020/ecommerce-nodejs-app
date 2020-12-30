@@ -15,8 +15,8 @@ productsController.get("/products", async (req, res) => {
 productsController.post("/product", async (req, res) => {
   try {
     const productInfo = req.body;
-    const response = await addProductSL(productInfo);
-    res.status(200).json(response);
+    const results = await addProductSL(productInfo);
+    res.status(200).json(results);
   } catch (err) {
     res.status(500).json({
       msg: err,
