@@ -2,18 +2,12 @@
 
 //DATA STRUCTURE
 class UserModel {
-  prepareUserData(userInfo, id) {
+  prepareUserData(userInfo) {
     const user = {
-      id: id,
+      _id: userInfo.id,
       name: userInfo.name,
-      username:
-        userInfo.username === "undefined"
-          ? userInfo.username
-          : userInfo.username.toUpperCase(),
-      email:
-        userInfo.email === "undefined"
-          ? userInfo.email
-          : userInfo.email.toUpperCase(),
+      username: userInfo.username,
+      email: userInfo.email,
       password: userInfo.password,
       DOB: userInfo.DOB,
       addresses: userInfo.addresses,

@@ -1,15 +1,13 @@
 //THIS SCRIPT IS THE DATA ACCESS LAYER(DAL) FOR USERS
 //The data access layer interacts with the database by performing queries
 
-//functions that end with DAL are exported and used in services.
-//functions that don't end in DAL are seperations of concerns
-
 const db = require("../../dbconfig");
 
 //variables
 const usersCollection = "users";
 
-const checkIfUserExist = async (user) => {
+//returns true if user exist, false if user doesn't.
+const checkIfUserExistDAL = async (user) => {
   return new Promise(async (resolve, reject) => {
     const userEmail = user.email;
     const username = user.username;
@@ -29,41 +27,55 @@ const checkIfUserExist = async (user) => {
     });
   });
 };
-/********************************************************************/
 
-//get list of all users
-const getUsersDAL = async () => {
+//add new user to database
+//returns 1 if successfull or err if it failed
+const addUserDAL = async (user) => {
   return new Promise(async (resolve, reject) => {
+    //insert user with hashed password
     const dbState = db.getDB();
     const collection = await dbState.collection(usersCollection);
-    const find = await collection.find({});
-    const results = await find.toArray((err, users) => {
-      if (err) {
+    const insertUser = await collection.insertOne(user, (err, results) => {
+      if (results.result.ok === 1) {
+        resolve(results.result.ok);
+      } else {
         reject(err);
       }
-      resolve(users);
     });
   });
 };
 
-//add new user to database
-const addUserDAL = async (user) => {
-  const userExist = await checkIfUserExist(user);
-  if (!userExist) {
-    return new Promise(async (resolve, reject) => {
-      //insert user with hashed password
-      const dbState = db.getDB();
-      const collection = await dbState.collection(usersCollection);
-      const insertUser = await collection.insertOne(user, (err, results) => {
-        if (err) reject(err);
-        if (results.result.ok === 1) {
-          resolve(results.result.ok);
-        }
-      });
+//if user isn't found, it returns an empty array.
+//otherwise it returns an array with user object
+const getUserDAL = async (user) => {
+  return new Promise(async (resolve, reject) => {
+    const dbState = db.getDB();
+    const collection = await dbState.collection(usersCollection);
+    const find = await collection.find({
+      username: user.username,
     });
-  } else {
-    return 2;
-  }
+    const results = await find.toArray((err, user) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(user);
+    });
+  });
 };
 
-module.exports = { getUsersDAL, addUserDAL };
+module.exports = { getUserDAL, addUserDAL, checkIfUserExistDAL };
+
+//get list of all users
+// const getUsersDAL = async () => {
+//   return new Promise(async (resolve, reject) => {
+//     const dbState = db.getDB();
+//     const collection = await dbState.collection(usersCollection);
+//     const find = await collection.find({});
+//     const results = await find.toArray((err, users) => {
+//       if (err) {
+//         reject(err);
+//       }
+//       resolve(users);
+//     });
+//   });
+// };
