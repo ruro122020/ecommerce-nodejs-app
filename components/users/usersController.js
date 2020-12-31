@@ -17,6 +17,19 @@ const jwt = require("jsonwebtoken");
 const usersController = express.Router();
 const { addUserSL, authenticateUserSL } = require("./usersService");
 
+const verfiyToken = (req, res, next) => {
+  console.log("in verify token");
+  const authHeader = req.headers["authorization"];
+  const token = authHeader.split(" ")[1];
+
+  if (token === null) return res.status(401).json({ msg: "token is null" });
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+    console.log("err", err);
+    if (err) return res.status(403).json({ msg: "invalid token", err: err });
+    req.user = user;
+    next();
+  });
+};
 //SECURE THIS ROUTE
 // usersController.get("/users", async (req, res) => {
 //   try {
@@ -51,17 +64,18 @@ usersController.post("/login-user", async (req, res) => {
   const userLogin = req.body;
   //Authenticate user
   const userIsAuthenticated = await authenticateUserSL(userLogin);
+  console.log("user id", userIsAuthenticated.user._id);
   if (userIsAuthenticated.verified) {
     //create jwt token
     const accessToken = jwt.sign(
       userIsAuthenticated.user,
       process.env.ACCESS_TOKEN_SECRET
     );
-    // send token back to client
+    // send token to client
     res.status(200).json({ accessToken: accessToken });
   } else {
     res.status(400).json({
-      msg: "Cannot find User",
+      msg: "Not allowed",
     });
   }
 });
@@ -72,18 +86,21 @@ usersController.post("/login-user", async (req, res) => {
 // usersController.post("/login-employee", async (req, res) => {});
 /**********************PROTECTED ROUTES********************************/
 //User Protected Route
-const verfiyToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
 
-  if (token === null) return res.status(401);
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    if (err) return res.status(403);
-    req.user = user;
-    next();
-  });
-};
-usersController.post("/user/:id/profile", verfiyToken, async (req, res) => {});
+usersController.get("/:id/profile", verfiyToken, async (req, res) => {
+  const user = req.user;
+  const id = req.params;
+  //Once token is verified, check if id params match as well
+  if (user._id === id.id) {
+    res.status(200).json({
+      user: user,
+    });
+  } else {
+    res.status(401).json({
+      msg: "user id does not match",
+    });
+  }
+});
 
 // usersController.post("/user/:id/account", verfiyToken, async (req, res) => {});
 // usersController.post("/user/:id/cart", verfiyToken, async (req, res) => {});
