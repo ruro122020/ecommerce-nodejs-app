@@ -15,30 +15,9 @@ step 7: controller responds to the client
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const usersController = express.Router();
-const { addUserSL, authenticateUserSL } = require("./usersService");
+const { addUserSL, loginUserSL } = require("./usersService");
+const { verfiyToken } = require("./helpers/auth");
 
-const verfiyToken = (req, res, next) => {
-  console.log("in verify token");
-  const authHeader = req.headers["authorization"];
-  const token = authHeader.split(" ")[1];
-
-  if (token === null) return res.status(401).json({ msg: "token is null" });
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
-    console.log("err", err);
-    if (err) return res.status(403).json({ msg: "invalid token", err: err });
-    req.user = user;
-    next();
-  });
-};
-//SECURE THIS ROUTE
-// usersController.get("/users", async (req, res) => {
-//   try {
-//     const users = await getUsersSL();
-//     res.status(200).json(users);
-//   } catch (err) {
-//     res.status(500).json(err);
-//   }
-// });
 /**********************REGISTRATION ROUTES****************************/
 //User Registration Route
 usersController.post("/register-user", async (req, res) => {
@@ -62,20 +41,20 @@ usersController.post("/register-user", async (req, res) => {
 //User Login Route
 usersController.post("/login-user", async (req, res) => {
   const userLogin = req.body;
-  //Authenticate user
-  const userIsAuthenticated = await authenticateUserSL(userLogin);
+  const userIsAuthenticated = await loginUserSL(userLogin);
   console.log("user id", userIsAuthenticated.user._id);
   if (userIsAuthenticated.verified) {
     //create jwt token
     const accessToken = jwt.sign(
       userIsAuthenticated.user,
-      process.env.ACCESS_TOKEN_SECRET
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "7d" }
     );
     // send token to client
     res.status(200).json({ accessToken: accessToken });
   } else {
     res.status(400).json({
-      msg: "Not allowed",
+      msg: "Login was unsuccessful",
     });
   }
 });
@@ -86,8 +65,7 @@ usersController.post("/login-user", async (req, res) => {
 // usersController.post("/login-employee", async (req, res) => {});
 /**********************PROTECTED ROUTES********************************/
 //User Protected Route
-
-usersController.get("/:id/profile", verfiyToken, async (req, res) => {
+usersController.get("/user/:id/profile", verfiyToken, async (req, res) => {
   const user = req.user;
   const id = req.params;
   //Once token is verified, check if id params match as well
@@ -101,13 +79,13 @@ usersController.get("/:id/profile", verfiyToken, async (req, res) => {
     });
   }
 });
-
 // usersController.post("/user/:id/account", verfiyToken, async (req, res) => {});
-// usersController.post("/user/:id/cart", verfiyToken, async (req, res) => {});
 // usersController.post("/user/:id/order", verfiyToken, async (req, res) => {});
+
 // //Admin Protected Route
 // usersController.post("/admin/:id/profile", verfiyToken, async (req, res) => {});
 // usersController.post("/admin/:id/account", verfiyToken, async (req, res) => {});
+
 // //Employee Protected Route
 // usersController.post(
 //   "/employee/:id/profile",
