@@ -17,6 +17,16 @@ class UserModel {
     };
     return user;
   }
+
+  prepareProfileData(user) {
+    const profileDataFormat = {
+      name: user.name,
+      email: user.email,
+      address: user.addresses,
+      phone: user.contact,
+    };
+    return profileDataFormat;
+  }
 }
 module.exports = UserModel;
 

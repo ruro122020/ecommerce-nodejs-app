@@ -12,15 +12,27 @@ const verfiyToken = (req, res, next) => {
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
     console.log("err", err);
     if (err) return res.status(403).json({ msg: "invalid token", err: err });
+    console.log("user", user);
     req.user = user;
     next();
   });
 };
 
-const createTokens = (user, secret, secret2) => {
-  const createToken = jwt.sign(user, secret, { expiresIn: "1m" });
-  const createRefreshedToken = jwt.sign(user, secret2, { expiresIn: "7d" });
-  return Promise.all([createToken, createRefreshedToken]);
-};
-
+/*DATA USER THAT IS IN JWT.VERIFY
+ user = {
+  _id: '6005d7dde9cd9b384cc98a83',
+  name: null,
+  username: 'tracy',
+  email: null,
+  password: '$2b$10$X3I9APgZ30kx3ekUhU66yuvYZa4DfliTLUQPuY8RDebr78p308evq',
+  DOB: null,
+  addresses: null,
+  paymentMethods: null,
+  contact: null,
+  date: '2021-01-18T18:47:57.527Z',
+  iat: 1610995704,
+  exp: 1611600504
+}
+  
+ */
 module.exports = { verfiyToken };

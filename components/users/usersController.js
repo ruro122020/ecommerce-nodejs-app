@@ -15,7 +15,7 @@ step 7: controller responds to the client
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const usersController = express.Router();
-const { addUserSL, loginUserSL } = require("./usersService");
+const { addUserSL, loginUserSL, getUserProfile } = require("./usersService");
 const { verfiyToken } = require("./helpers/auth");
 
 /**********************REGISTRATION ROUTES****************************/
@@ -65,14 +65,12 @@ usersController.post("/login-user", async (req, res) => {
 // usersController.post("/login-employee", async (req, res) => {});
 /**********************PROTECTED ROUTES********************************/
 //User Protected Route
-usersController.get("/user/:id/profile", verfiyToken, async (req, res) => {
+usersController.get("/user/profile", verfiyToken, async (req, res) => {
   const user = req.user;
-  const id = req.params;
-  //Once token is verified, check if id params match as well
-  if (user._id === id.id) {
-    res.status(200).json({
-      user: user,
-    });
+  //format user data to just send profile information
+  const userProfile = getUserProfile(user);
+  if (userProfile.send) {
+    res.status(200).json({ user: userProfile.info });
   } else {
     res.status(401).json({
       msg: "user id does not match",

@@ -38,11 +38,11 @@ const addUserSL = async (userRegistration) => {
   try {
     await assignID(userRegistration);
     await encryptPassword(userRegistration);
-    const user = User.prepareUserData(userRegistration);
-    const userExist = await checkIfUserExistDAL(user);
+    const userDataPrepared = User.prepareUserData(userRegistration);
+    const userExist = await checkIfUserExistDAL(userDataPrepared);
 
     if (!userExist) {
-      const results = await addUserDAL(user);
+      const results = await addUserDAL(userDataPrepared);
       if (results === 1) {
         return { msg: "user has been added", code: 1 };
       }
@@ -55,9 +55,9 @@ const addUserSL = async (userRegistration) => {
 };
 
 const loginUserSL = async (userLogin) => {
-  const user = User.prepareUserData(userLogin);
-  const userDB = await getUserDAL(user);
-  const passwordConfirmed = await confirmPassword(user, userDB);
+  const userDataPrepared = User.prepareUserData(userLogin);
+  const userDB = await getUserDAL(userDataPrepared);
+  const passwordConfirmed = await confirmPassword(userDataPrepared, userDB);
   if (passwordConfirmed) {
     return { verified: true, user: userDB[0] };
   } else {
@@ -65,4 +65,10 @@ const loginUserSL = async (userLogin) => {
   }
 };
 
-module.exports = { addUserSL, loginUserSL };
+const getUserProfile = (user) => {
+  console.log("user in SL", user);
+  const userProfile = { info: User.prepareProfileData(user), send: true };
+  return userProfile;
+};
+
+module.exports = { addUserSL, loginUserSL, getUserProfile };

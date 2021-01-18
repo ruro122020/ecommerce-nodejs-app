@@ -64,18 +64,3 @@ const getUserDAL = async (user) => {
 };
 
 module.exports = { getUserDAL, addUserDAL, checkIfUserExistDAL };
-
-//get list of all users
-// const getUsersDAL = async () => {
-//   return new Promise(async (resolve, reject) => {
-//     const dbState = db.getDB();
-//     const collection = await dbState.collection(usersCollection);
-//     const find = await collection.find({});
-//     const results = await find.toArray((err, users) => {
-//       if (err) {
-//         reject(err);
-//       }
-//       resolve(users);
-//     });
-//   });
-// };

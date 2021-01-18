@@ -1,2 +1,7 @@
 ecommerce backend application
-Technologies: nodejs express and mongoDB
+Technologies:
+nodejs
+express
+mongoDB
+jwt
+bcrypt
