@@ -65,10 +65,10 @@ const loginUserSL = async (userLogin) => {
   }
 };
 
-const getUserProfile = (user) => {
+const prepareUserProfileSL = (user) => {
   console.log("user in SL", user);
-  const userProfile = { info: User.prepareProfileData(user), send: true };
+  const userProfile = { info: User.prepareProfileData(user), prepared: true };
   return userProfile;
 };
 
-module.exports = { addUserSL, loginUserSL, getUserProfile };
+module.exports = { addUserSL, loginUserSL, prepareUserProfileSL };

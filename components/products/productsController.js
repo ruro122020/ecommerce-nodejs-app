@@ -1,9 +1,9 @@
 const express = require("express");
-const productsController = express.Router();
-const db = require("../../dbconfig");
+const router = express.Router();
+
 const { geProductsSL, addProductSL } = require("./productsService");
 
-productsController.get("/products", async (req, res) => {
+router.get("/products", async (req, res) => {
   try {
     const products = await geProductsSL();
     res.status(200).json(products);
@@ -12,7 +12,7 @@ productsController.get("/products", async (req, res) => {
   }
 });
 
-productsController.post("/product", async (req, res) => {
+router.post("/product", async (req, res) => {
   try {
     const productInfo = req.body;
     const results = await addProductSL(productInfo);
@@ -23,4 +23,4 @@ productsController.post("/product", async (req, res) => {
     });
   }
 });
-module.exports = productsController;
+module.exports = router;

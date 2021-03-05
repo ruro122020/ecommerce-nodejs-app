@@ -15,7 +15,11 @@ step 7: controller responds to the client
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const usersController = express.Router();
-const { addUserSL, loginUserSL, getUserProfile } = require("./usersService");
+const {
+  addUserSL,
+  loginUserSL,
+  prepareUserProfileSL,
+} = require("./usersService");
 const { verfiyToken } = require("./helpers/auth");
 
 /**********************REGISTRATION ROUTES****************************/
@@ -68,8 +72,8 @@ usersController.post("/login-user", async (req, res) => {
 usersController.get("/user/profile", verfiyToken, async (req, res) => {
   const user = req.user;
   //format user data to just send profile information
-  const userProfile = getUserProfile(user);
-  if (userProfile.send) {
+  const userProfile = prepareUserProfileSL(user);
+  if (userProfile.prepared) {
     res.status(200).json({ user: userProfile.info });
   } else {
     res.status(401).json({

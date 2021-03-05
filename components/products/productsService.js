@@ -14,7 +14,7 @@ const addProductSL = async (productInfo) => {
   try {
     const product = {
       _id: ObjectID(),
-      name: productInfo.name.toUpperCase(),
+      name: productInfo.name,
       description: productInfo.description,
       price: productInfo.price,
       quantity: productInfo.quantity,

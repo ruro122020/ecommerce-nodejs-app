@@ -1,4 +1,6 @@
 const db = require("../../dbconfig");
+const { GridFSBucket } = require("mongodb");
+var fs = require("fs");
 //variables
 const productsCollection = "products";
 
@@ -26,6 +28,7 @@ const getProductsDAL = async () => {
   try {
     return new Promise(async (resolve, reject) => {
       const dbState = db.getDB();
+      console.log("db in getProductsDAL", dbState);
       const collection = await dbState.collection(productsCollection);
       const find = await collection.find({});
       const results = await find.toArray((err, products) => {
@@ -40,10 +43,23 @@ const getProductsDAL = async () => {
 
 //add new product to database
 const addProductDAL = async (product) => {
+  const dbState = db.getDB();
+  //storying media files to mongodb
+  const gridfsBucket = new GridFSBucket(dbState);
+  fs.createReadStream("./CROISSANTS.jpg")
+    .pipe(gridfsBucket.openUploadStream("CROISSANTS.jpg"))
+    .on("error", (err) => {
+      console.log("err", err);
+    })
+    .on("finish", () => {
+      console.log("done");
+    });
+
+  //checking if products already exist in database
   const productExist = await checkIfProductExist(product);
   if (!productExist) {
     return new Promise(async (resolve, reject) => {
-      const dbState = db.getDB();
+      // const dbState = db.getDB();
       const collection = await dbState.collection(productsCollection);
       const insertProduct = await collection.insertOne(
         product,
