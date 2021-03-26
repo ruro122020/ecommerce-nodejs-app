@@ -20,7 +20,7 @@ const {
   loginUserSL,
   prepareUserProfileSL,
 } = require("./usersService");
-const { verfiyToken } = require("./helpers/auth");
+// const { verfiyToken } = require("./helpers/auth");
 
 /**********************REGISTRATION ROUTES****************************/
 //User Registration Route
@@ -35,9 +35,6 @@ usersController.post("/register-user", async (req, res) => {
     });
   }
 });
-
-// //Admin Registration Route
-// usersController.post("/register-admin", async (req, res) => {});
 
 // //Employee Registration Route
 // usersController.post("/register-employee", async (req, res) => {});
@@ -63,13 +60,11 @@ usersController.post("/login-user", async (req, res) => {
   }
 });
 
-// //Admin Login Route
-// usersController.post("/login-admin", async (req, res) => {});
 // //Employee Login Route
 // usersController.post("/login-employee", async (req, res) => {});
 /**********************PROTECTED ROUTES********************************/
 //User Protected Route
-usersController.get("/user/profile", verfiyToken, async (req, res) => {
+usersController.get("/user/profile", async (req, res) => {
   const user = req.user;
   //format user data to just send profile information
   const userProfile = prepareUserProfileSL(user);
@@ -84,11 +79,7 @@ usersController.get("/user/profile", verfiyToken, async (req, res) => {
 // usersController.post("/user/:id/account", verfiyToken, async (req, res) => {});
 // usersController.post("/user/:id/order", verfiyToken, async (req, res) => {});
 
-// //Admin Protected Route
-// usersController.post("/admin/:id/profile", verfiyToken, async (req, res) => {});
-// usersController.post("/admin/:id/account", verfiyToken, async (req, res) => {});
-
-// //Employee Protected Route
+// Employee Protected Route
 // usersController.post(
 //   "/employee/:id/profile",
 //   verfiyToken,

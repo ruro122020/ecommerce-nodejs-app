@@ -11,7 +11,7 @@ const db = require("./dbconfig");
 //imported routes
 const productsController = require("./components/products/productsController");
 const usersController = require("./components/users/usersController");
-
+const adminController = require("./components/adminUsers/adminController");
 //variables
 
 app.use(logger("dev"));
@@ -23,6 +23,7 @@ app.use(cors());
 //routes
 app.use("/", productsController);
 app.use("/", usersController);
+app.use("/", adminController);
 // app.use("/", (req, res) => {
 //   res.status(200).json("home");
 // });
