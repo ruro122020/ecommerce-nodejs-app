@@ -4,7 +4,7 @@ const {
 } = require("../../container/security/security");
 // const { addUserDAL, checkIfUserExistDAL, getUserDAL } = require("./usersDAL");
 // const UserModel = require("./usersModel");
-// const User = new UserModel();
+const Admin = new AdminModel();
 
 const addAdminSL = async (adminRegistration) => {
   try {
@@ -13,6 +13,8 @@ const addAdminSL = async (adminRegistration) => {
 
     const adminDataPrepared = Admin.prepareAdminData(adminRegistration);
     const adminExist = await checkIfAdminExistDAL(adminDataPrepared);
+  } catch (err) {
+    console.log("err in adminService.js", err);
   }
 };
 
