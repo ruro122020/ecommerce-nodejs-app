@@ -15,3 +15,5 @@ class AdminModel {
     return admin;
   }
 }
+
+module.exports = AdminModel;
