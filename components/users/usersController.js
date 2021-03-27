@@ -22,7 +22,7 @@ const {
 } = require("./usersService");
 // const { verfiyToken } = require("./helpers/auth");
 
-/**********************REGISTRATION ROUTES****************************/
+/**********************REGISTRATION ROUTE****************************/
 //User Registration Route
 usersController.post("/register-user", async (req, res) => {
   try {
@@ -36,9 +36,7 @@ usersController.post("/register-user", async (req, res) => {
   }
 });
 
-// //Employee Registration Route
-// usersController.post("/register-employee", async (req, res) => {});
-/**********************LOGIN ROUTES***********************************/
+/**********************LOGIN ROUTE***********************************/
 //User Login Route
 usersController.post("/login-user", async (req, res) => {
   const userLogin = req.body;
@@ -48,7 +46,7 @@ usersController.post("/login-user", async (req, res) => {
     //create jwt token
     const accessToken = jwt.sign(
       userIsAuthenticated.user,
-      process.env.ACCESS_TOKEN_SECRET,
+      process.env.ACCESS_TOKEN_SECRET_USER,
       { expiresIn: "7d" }
     );
     // send token to client
@@ -60,8 +58,6 @@ usersController.post("/login-user", async (req, res) => {
   }
 });
 
-// //Employee Login Route
-// usersController.post("/login-employee", async (req, res) => {});
 /**********************PROTECTED ROUTES********************************/
 //User Protected Route
 usersController.get("/user/profile", async (req, res) => {
@@ -79,15 +75,4 @@ usersController.get("/user/profile", async (req, res) => {
 // usersController.post("/user/:id/account", verfiyToken, async (req, res) => {});
 // usersController.post("/user/:id/order", verfiyToken, async (req, res) => {});
 
-// Employee Protected Route
-// usersController.post(
-//   "/employee/:id/profile",
-//   verfiyToken,
-//   async (req, res) => {}
-// );
-// usersController.post(
-//   "/employee/:id/account",
-//   verfiyToken,
-//   async (req, res) => {}
-// );
 module.exports = usersController;

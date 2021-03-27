@@ -5,15 +5,13 @@ const adminCollection = "admin";
 
 const checkIfAdminExistDAL = async (admin) => {
   return new Promise(async (resolve, reject) => {
-    const adminEmail = admin.email;
     const adminUsername = admin.username;
     const dbState = db.getDB();
     const collection = await dbState.collection(adminCollection);
     const findAdmin = await collection.findOne({
-      email: adminEmail,
       username: adminUsername,
     });
-
+    console.log("findAdmin in checkifadminexistDAL", findAdmin);
     if (findAdmin) {
       return resolve(true);
     } else {
@@ -24,7 +22,7 @@ const checkIfAdminExistDAL = async (admin) => {
 
 const addAdminDAL = async (admin) => {
   return new Promise(async (resolve, reject) => {
-    dbstate = db.getDB();
+    const dbState = db.getDB();
     const collection = await dbState.collection(adminCollection);
     await collection.insertOne(admin, (err, results) => {
       if (results.result.ok === 1) {
@@ -36,4 +34,23 @@ const addAdminDAL = async (admin) => {
   });
 };
 
-module.exports = { checkIfAdminExistDAL };
+const getAdminDAL = async (admin) => {
+  return new Promise(async (resolve, reject) => {
+    //get admin username and password
+    console.log("admin in getadminDAL", admin);
+    const username = admin.username;
+    const dbState = db.getDB();
+    const collection = await dbState.collection(adminCollection);
+    const findAdmin = await collection.findOne({
+      username: username,
+    });
+    console.log("findAdmin in getAdminDAL", findAdmin);
+    if (findAdmin) {
+      return resolve(findAdmin);
+    } else {
+      return resolve(false);
+    }
+  });
+};
+
+module.exports = { checkIfAdminExistDAL, addAdminDAL, getAdminDAL };
