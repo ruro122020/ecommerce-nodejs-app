@@ -38,10 +38,10 @@ usersController.post("/register-user", async (req, res) => {
 
 /**********************LOGIN ROUTE***********************************/
 //User Login Route
-usersController.post("/login-user", async (req, res) => {
+usersController.get("/login-user", async (req, res) => {
   const userLogin = req.body;
   const userIsAuthenticated = await loginUserSL(userLogin);
-  console.log("user id", userIsAuthenticated.user._id);
+  console.log("userIsAuthenticated", userIsAuthenticated);
   if (userIsAuthenticated.verified) {
     //create jwt token
     const accessToken = jwt.sign(
@@ -49,11 +49,11 @@ usersController.post("/login-user", async (req, res) => {
       process.env.ACCESS_TOKEN_SECRET_USER,
       { expiresIn: "7d" }
     );
-    // send token to client
+    //send token to client
     res.status(200).json({ accessToken: accessToken });
   } else {
     res.status(400).json({
-      msg: "Login was unsuccessful",
+      msg: "Username or password not found. Login failed.",
     });
   }
 });

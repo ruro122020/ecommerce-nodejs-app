@@ -8,11 +8,11 @@ const checkIfAdminExistDAL = async (admin) => {
     const adminUsername = admin.username;
     const dbState = db.getDB();
     const collection = await dbState.collection(adminCollection);
-    const findAdmin = await collection.findOne({
+    const adminDB = await collection.findOne({
       username: adminUsername,
     });
-    console.log("findAdmin in checkifadminexistDAL", findAdmin);
-    if (findAdmin) {
+    console.log("adminDB in checkifadminexistDAL", adminDB);
+    if (adminDB) {
       return resolve(true);
     } else {
       return resolve(false);
@@ -41,12 +41,12 @@ const getAdminDAL = async (admin) => {
     const username = admin.username;
     const dbState = db.getDB();
     const collection = await dbState.collection(adminCollection);
-    const findAdmin = await collection.findOne({
+    const adminDB = await collection.findOne({
       username: username,
     });
-    console.log("findAdmin in getAdminDAL", findAdmin);
-    if (findAdmin) {
-      return resolve(findAdmin);
+    console.log("adminDB in getAdminDAL", adminDB);
+    if (adminDB) {
+      return resolve(adminDB);
     } else {
       return resolve(false);
     }

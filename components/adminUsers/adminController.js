@@ -19,7 +19,7 @@ adminController.post("/register-admin", async (req, res) => {
 });
 /**********************LOGIN ROUTE***********************************/
 // Admin Login Route
-adminController.post("/login-admin", async (req, res) => {
+adminController.get("/login-admin", async (req, res) => {
   const adminLogin = req.body;
   const adminIsAuthenticated = await loginAdminSL(adminLogin);
 
@@ -39,6 +39,7 @@ adminController.post("/login-admin", async (req, res) => {
   }
 });
 
+/**********************PROTECTED ROUTES********************************/
 // Admin Protected Route
 // adminController.post("/admin/:id/profile", verfiyToken, async (req, res) => {});
 // adminController.post("/admin/:id/account", verfiyToken, async (req, res) => {});

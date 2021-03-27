@@ -4,64 +4,45 @@
 const ObjectID = require("mongodb").ObjectId;
 const bcrypt = require("bcrypt");
 const { addUserDAL, checkIfUserExistDAL, getUserDAL } = require("./usersDAL");
+const {
+  encryptPassword,
+  assignID,
+  confirmPassword,
+} = require("../../container/security/security");
 const UserModel = require("./usersModel");
 const User = new UserModel();
 
-// const getUsersSL = async () => {
-//   try {
-//     const users = await getUsersDAL();
-//     return users;
-//   } catch (err) {
-//     return err;
-//   }
-// };
-/******************************HELPER FUNCTIONS***************************************************/
-
-const encryptPassword = async (userRegistration) => {
-  const hashPassword = await bcrypt.hash(userRegistration.password, 10);
-  userRegistration.password = hashPassword;
-  return userRegistration;
-};
-
-const assignID = async (userRegistration) => {
-  const id = ObjectID();
-  userRegistration.id = id;
-  return userRegistration;
-};
-
-const confirmPassword = async (user, userDB) => {
-  if (userDB.length === 0) return;
-  return bcrypt.compare(user.password, userDB[0].password);
-};
-/*********************************************************************************/
-const addUserSL = async (userRegistration) => {
+const addUserSL = async (user) => {
   try {
-    await assignID(userRegistration);
-    await encryptPassword(userRegistration);
-    const userDataPrepared = User.prepareUserData(userRegistration);
+    await assignID(user);
+    await encryptPassword(user);
+    const userDataPrepared = User.prepareUserData(user);
     const userExist = await checkIfUserExistDAL(userDataPrepared);
 
-    if (!userExist) {
-      const results = await addUserDAL(userDataPrepared);
-      if (results === 1) {
-        return { msg: "user has been added", code: 1 };
-      }
+    if (userExist) {
+      return "a user by this username already exist";
     } else {
-      return { msg: "user already exist", code: 2 };
+      await addUserDAL(userDataPrepared);
+      return "user has been added";
     }
   } catch (err) {
     console.log("err in usersService.js", err);
   }
 };
 
-const loginUserSL = async (userLogin) => {
-  const userDataPrepared = User.prepareUserData(userLogin);
+const loginUserSL = async (user) => {
+  //prepare user data
+  const userDataPrepared = User.prepareUserData(user);
+  //get user from mongodb
   const userDB = await getUserDAL(userDataPrepared);
-  const passwordConfirmed = await confirmPassword(userDataPrepared, userDB);
-  if (passwordConfirmed) {
-    return { verified: true, user: userDB[0] };
+  if (userDB) {
+    //password authentication
+    const passwordConfirmed = await confirmPassword(userDataPrepared, userDB);
+    if (passwordConfirmed) {
+      return { verified: true, user: userDB };
+    }
   } else {
-    return { verified: false, user: "password does not match" };
+    return { verified: false, user: null };
   }
 };
 

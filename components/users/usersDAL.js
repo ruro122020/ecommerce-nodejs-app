@@ -13,18 +13,15 @@ const checkIfUserExistDAL = async (user) => {
     const username = user.username;
     const dbState = db.getDB();
     const collection = await dbState.collection(usersCollection);
-    const findUser = await collection.find({
+    const userDB = await collection.findOne({
       username: username,
       email: userEmail,
     });
-    const results = await findUser.toArray((err, user) => {
-      if (err) reject(err);
-      if (user.length === 0) {
-        return resolve(false);
-      } else {
-        resolve(true);
-      }
-    });
+    if (userDB) {
+      return resolve(userDB);
+    } else {
+      return resolve(false);
+    }
   });
 };
 
@@ -51,15 +48,14 @@ const getUserDAL = async (user) => {
   return new Promise(async (resolve, reject) => {
     const dbState = db.getDB();
     const collection = await dbState.collection(usersCollection);
-    const find = await collection.find({
+    const userDB = await collection.findOne({
       username: user.username,
     });
-    const results = await find.toArray((err, user) => {
-      if (err) {
-        reject(err);
-      }
-      resolve(user);
-    });
+    if (userDB) {
+      return resolve(userDB);
+    } else {
+      return resolve(false);
+    }
   });
 };
 
