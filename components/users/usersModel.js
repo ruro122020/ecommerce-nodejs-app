@@ -5,7 +5,8 @@ class UserModel {
   prepareUserData(userInfo) {
     const user = {
       _id: userInfo.id,
-      name: userInfo.name,
+      firstName: userInfo.firstName,
+      lastName: userInfo.lastName,
       username: userInfo.username,
       email: userInfo.email,
       password: userInfo.password,

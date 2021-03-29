@@ -2,7 +2,8 @@ class AdminModel {
   prepareAdminData(adminInfo) {
     const admin = {
       _id: adminInfo.id,
-      name: adminInfo.name,
+      firstName: adminInfo.firstName,
+      lastName: adminInfo.lastName,
       username: adminInfo.username,
       email: adminInfo.email,
       password: adminInfo.password,
